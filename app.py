@@ -14,6 +14,7 @@ import requests
 import json, re
 from dateutil import parser as dateparser
 from time import sleep
+from sklearn.linear_model import LogisticRegression
 
 from gensim import models
 import gensim
