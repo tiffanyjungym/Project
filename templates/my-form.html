@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<body>
+    <center><h1>Fortune Cookie 0.1</h1></center>
+    <br>
+    <br>
+    <center><h3>Please enter the ASIN of your Amazon products, separated by ", " </h3>
+        <h5>(examples: B002KCO96C, B006LXOJC0)</h5>
+        <br>
+    <form action="." method="POST">
+        <input type="text" name="text">
+        <input type="submit" name="my-form" value="Send">
+    </form></center>
+</body>
+{% endblock %}
