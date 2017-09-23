@@ -7,25 +7,7 @@ from bokeh.embed import components
 from bokeh.layouts import gridplot
 from bokeh.plotting import figure, show, output_file
 
-# !/usr/bin/env python
-# -*- coding: utf-8 -*-
-# Written as part of https://www.scrapehero.com/how-to-scrape-amazon-product-reviews-using-python/
-import nltk
-import gzip
 import pandas as pd
-import numpy as np
-import math
-import seaborn as sns
-import matplotlib.pyplot as plt
-from IPython.display import HTML
-import pdb
-# import plotly.plotly as py
-# import plotly.graph_objs as go
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.cross_validation import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn import metrics, cross_validation
-from sklearn.metrics import confusion_matrix
 from lxml import html
 
 import requests
