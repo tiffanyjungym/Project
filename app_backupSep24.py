@@ -308,7 +308,6 @@ def my_form():
 @app.route('/', methods=['POST'])
 
 def my_form_post():
-    pd.set_option('display.max_colwidth', -1)
     input = request.form['text'].replace(" ", "")
     asinList0 = list(input.split(','))
     asinList = [x.encode('UTF8') for x in asinList0]
@@ -330,15 +329,15 @@ def my_form_post():
         predRankCat = prediction.iloc[i]['prediction']
 
         predList.append((imgLink, asin, name, dateFirst, daysToFiveRev, reviewLength, price, predRankCat))
-        predResult0 = pd.DataFrame(predList, columns=['Image', 'ASIN', 'Name', 'Date of first review',
-                                                      'Days before 5th review',
+        predResult0 = pd.DataFrame(predList, columns=['imgLink', 'ASIN', 'Name', 'Date of first review',
+                                                      'Time to five reviews (days)',
                                                       'Average length of review', 'Price', 'Sales Rank'
                                                       ])
     predResult0['Predicted_Rank'] = predResult0['Sales Rank'].apply(
         lambda x: ['Best Seller' if x == 2 else 'Top 50%' if x == 1
         else 'Bottom 50%' if x == 0 else ''])
     predResult0['Predicted_Rank'] = predResult0['Predicted_Rank'].map(lambda x: x[0].lstrip('['').rstrip('']'))
-    predResult0['Image'] = '<img src="' + predResult0['Image'].astype(str) + '" height="50" width="50">'
+    predResult0['Image'] = '<img src="' + predResult0['imgLink'].astype(str) + '"height="42" width="42">'
     predResult = predResult0[['ASIN', 'Predicted_Rank']].copy()
 
     best = list(predResult0[predResult0['Sales Rank'] == 2]['Predicted_Rank'])
@@ -349,9 +348,8 @@ def my_form_post():
         'background: greenyellow' if x.Predicted_Rank in best else 'background: mediumseagreen' if x.Predicted_Rank in mid
         else 'background: silver' if x.Predicted_Rank in low else '' for i in x], axis=1).render()
 
-    result2= predResult0[['Image','ASIN','Predicted_Rank', 'Name','Price','Days before 5th review','Average length of review']].copy()
 
-    return render_template('fortunecookietest.html', result1=result1, result2=result2.to_html(escape=False))
+    return render_template('fortunecookietest.html', result1=result1)
 
 
 

@@ -34,6 +34,7 @@ import pickle
 # from pprint import pprint
 # import re
 # import pandas as pd
+
 def ParseReviews(asin):
     # Added Retrying
     for i in range(5):
@@ -137,7 +138,9 @@ def ParseReviews(asin):
                     'review_posted_date': review_posted_date,
                     'review_header': review_header,
                     'review_rating': review_rating,
-                    'review_author': author
+                    'review_author': author,
+                    'imgLink': imglink,
+                    'brand': brand
 
                 }
                 reviews_list.append(review_dict)
@@ -148,9 +151,7 @@ def ParseReviews(asin):
                 'url': amazon_url,
                 'price': product_price,
                 'name': product_name,
-                'categories': categories,
-                'imgLink': imgLink,
-                'brand': brand
+                'categories': categories
             }
             return data
         except ValueError:
@@ -186,17 +187,14 @@ def GetDataInput(scrapedData, asinList):
                 overall = overall + (z + 1) * float(re.sub('[!@#$%]', '', scrapedData[i]['ratings'][starList[z]])) / 100
         description = scrapedData[i]['name']
         categories = pd.Series(scrapedData[i]['categories'])
-        imgLink = scrapedData[i]['imgLink']
-        brand = scrapedData[i]['brand']
-        metaList.append((asin, description, price, overall, categories, imgLink, brand))
+        metaList.append((asin, description, price, overall, categories))
 
         for j in range(0, len(scrapedData[i]['reviews'])):
             reviewText = scrapedData[i]['reviews'][j]['review_text']
             reviewTime = scrapedData[i]['reviews'][j]['review_posted_date']
             reviewList.append((asin, reviewTime, reviewText))
 
-    metaDfIn = pd.DataFrame(metaList,
-                            columns=['asin', 'description', 'price', 'overall', 'categories', 'imgLink', 'brand'])
+    metaDfIn = pd.DataFrame(metaList, columns=['asin', 'description', 'price', 'overall', 'categories'])
     reviewDfIn = pd.DataFrame(reviewList, columns=['asin', 'reviewTime', 'reviewText'])
     dfIn = reviewDfIn.join(metaDfIn.set_index('asin'), on='asin')
 
@@ -296,7 +294,6 @@ def RunML(mlData):
 #     sns.plt.show()
 
 
-
 app = Flask(__name__)
 
 
@@ -308,7 +305,6 @@ def my_form():
 @app.route('/', methods=['POST'])
 
 def my_form_post():
-    pd.set_option('display.max_colwidth', -1)
     input = request.form['text'].replace(" ", "")
     asinList0 = list(input.split(','))
     asinList = [x.encode('UTF8') for x in asinList0]
@@ -320,7 +316,6 @@ def my_form_post():
 
     predList = []
     for i in range(0, len(prediction)):
-        imgLink = prediction.iloc[i]['imgLink']
         asin = prediction.iloc[i]['asin']
         name = prediction.iloc[i]['description']
         dateFirst = prediction.iloc[i]['reviewTime']
@@ -328,30 +323,13 @@ def my_form_post():
         reviewLength = prediction.iloc[i]['lenReviewTextAvg']
         price = prediction.iloc[i]['price']
         predRankCat = prediction.iloc[i]['prediction']
+        predList.append((asin, name, dateFirst, daysToFiveRev, reviewLength, price, predRankCat))
+        predResult = pd.DataFrame(predList,
+                                  columns=['ASIN', 'Name', 'Date of first review', 'Time to five reviews (days)',
+                                           'Average length of review', 'Price', 'Sales Rank'
+                                           ])
 
-        predList.append((imgLink, asin, name, dateFirst, daysToFiveRev, reviewLength, price, predRankCat))
-        predResult0 = pd.DataFrame(predList, columns=['Image', 'ASIN', 'Name', 'Date of first review',
-                                                      'Days before 5th review',
-                                                      'Average length of review', 'Price', 'Sales Rank'
-                                                      ])
-    predResult0['Predicted_Rank'] = predResult0['Sales Rank'].apply(
-        lambda x: ['Best Seller' if x == 2 else 'Top 50%' if x == 1
-        else 'Bottom 50%' if x == 0 else ''])
-    predResult0['Predicted_Rank'] = predResult0['Predicted_Rank'].map(lambda x: x[0].lstrip('['').rstrip('']'))
-    predResult0['Image'] = '<img src="' + predResult0['Image'].astype(str) + '" height="50" width="50">'
-    predResult = predResult0[['ASIN', 'Predicted_Rank']].copy()
-
-    best = list(predResult0[predResult0['Sales Rank'] == 2]['Predicted_Rank'])
-    mid = list(predResult0[predResult0['Sales Rank'] == 1]['Predicted_Rank'])
-    low = list(predResult0[predResult0['Sales Rank'] == 0]['Predicted_Rank'])
-
-    result1=predResult.style.apply(lambda x: [
-        'background: greenyellow' if x.Predicted_Rank in best else 'background: mediumseagreen' if x.Predicted_Rank in mid
-        else 'background: silver' if x.Predicted_Rank in low else '' for i in x], axis=1).render()
-
-    result2= predResult0[['Image','ASIN','Predicted_Rank', 'Name','Price','Days before 5th review','Average length of review']].copy()
-
-    return render_template('fortunecookietest.html', result1=result1, result2=result2.to_html(escape=False))
+    return render_template('fortunecookietest.html', result=predResult.to_html(classes='table'))
 
 
 
