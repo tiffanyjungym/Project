@@ -315,8 +315,8 @@ def my_form_post():
 
 
     predResult0=[{'ASIN':'B074F2YGBC', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61dZqjVogTL._SL1500_.jpg', 'Predicted_Rank':'Best Seller', 'Price':'$129'},
-                 {'ASIN':'B074F2PHLB', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71SG5mfNh-L._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'$199'}]
-                 # {'ASIN':'c', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61dZqjVogTL._SL1500_.jpg', 'Predicted_Rank':'Best Seller'}]
+                 {'ASIN':'B074F2PHLB', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71SG5mfNh-L._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'$199'},
+                 {'ASIN':'B0742NW243', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61NNyibRsmL._SL1500_.jpg', 'Predicted_Rank':'Top 50%', 'Price':'$169'}]
     predResult00=[1]
 
     # scrapedData = ReadAsin(asinList)
