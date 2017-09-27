@@ -350,7 +350,7 @@ def my_form_post():
         else 'background: silver' if x.Predicted_Rank in low else '' for i in x], axis=1).render()
 
     result2= predResult0[['Image','ASIN','Predicted_Rank', 'Name','Price','Days before 5th review','Average length of review']].copy()
-
+1
     return render_template('fortunecookietest.html', result1=result1, result2=result2.to_html(escape=False))
 
 
