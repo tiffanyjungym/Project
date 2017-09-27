@@ -313,46 +313,53 @@ def my_form_post():
     asinList0 = list(input.split(','))
     asinList = [x.encode('UTF8') for x in asinList0]
 
-    scrapedData = ReadAsin(asinList)
-    dataInput = GetDataInput(scrapedData, asinList)
-    mlData = RunDoc2Vec(dataInput)
-    prediction = RunML(mlData)  # 0=best seller, 1=mid, 2=low
 
-    predList = []
-    for i in range(0, len(prediction)):
-        imgLink = prediction.iloc[i]['imgLink']
-        asin = prediction.iloc[i]['asin']
-        name = prediction.iloc[i]['description']
-        dateFirst = prediction.iloc[i]['reviewTime']
-        daysToFiveRev = prediction.iloc[i]['daysToFiveRev']
-        reviewLength = prediction.iloc[i]['lenReviewTextAvg']
-        price = prediction.iloc[i]['price']
-        predRankCat = prediction.iloc[i]['prediction']
+    predResult0=[{'ASIN':'B074F2YGBC', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61dZqjVogTL._SL1500_.jpg', 'Predicted_Rank':'Best Seller', 'Price':'$129'},
+                 {'ASIN':'B074F2PHLB', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71SG5mfNh-L._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'$199'}]
+                 # {'ASIN':'c', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61dZqjVogTL._SL1500_.jpg', 'Predicted_Rank':'Best Seller'}]
+    predResult00=[1]
 
-        predList.append((imgLink, asin, name, dateFirst, daysToFiveRev, reviewLength, price, predRankCat))
-        predResult0 = pd.DataFrame(predList, columns=['Image', 'ASIN', 'Name', 'Date of first review',
-                                                      'Days before 5th review',
-                                                      'Average length of review', 'Price', 'Sales Rank'
-                                                      ])
-    predResult0['Predicted_Rank'] = predResult0['Sales Rank'].apply(
-        lambda x: ['Best Seller' if x == 2 else 'Top 50%' if x == 1
-        else 'Bottom 50%' if x == 0 else ''])
-    predResult0['Predicted_Rank'] = predResult0['Predicted_Rank'].map(lambda x: x[0].lstrip('['').rstrip('']'))
-    predResult0['Image'] = '<img src="' + predResult0['Image'].astype(str) + '" height="50" width="50">'
-    predResult = predResult0[['ASIN', 'Predicted_Rank']].copy()
+    # scrapedData = ReadAsin(asinList)
+    # dataInput = GetDataInput(scrapedData, asinList)
+    # mlData = RunDoc2Vec(dataInput)
+    # prediction = RunML(mlData)  #
+    #
+    # predList = []
+    # for i in range(0, len(prediction)):
+    #     imgLink = prediction.iloc[i]['imgLink']
+    #     asin = prediction.iloc[i]['asin']
+    #     name = prediction.iloc[i]['description']
+    #     dateFirst = prediction.iloc[i]['reviewTime']
+    #     daysToFiveRev = prediction.iloc[i]['daysToFiveRev']
+    #     reviewLength = prediction.iloc[i]['lenReviewTextAvg']
+    #     price = prediction.iloc[i]['price']
+    #     predRankCat = prediction.iloc[i]['prediction']
+    #
+    #     predList.append((imgLink, asin, name, dateFirst, daysToFiveRev, reviewLength, price, predRankCat))
+    #     predResult0 = pd.DataFrame(predList, columns=['Image', 'ASIN', 'Name', 'Date of first review',
+    #                                                   'Days before 5th review',
+    #                                                   'Average length of review', 'Price', 'Sales Rank'
+    #                                                   ])
+    # predResult0['Predicted_Rank'] = predResult0['Sales Rank'].apply(
+    #     lambda x: ['Best Seller' if x == 2 else 'Top 50%' if x == 1
+    #     else 'Bottom 50%' if x == 0 else ''])
+    # predResult0['Predicted_Rank'] = predResult0['Predicted_Rank'].map(lambda x: x[0].lstrip('['').rstrip('']'))
+    # # predResult0['Image'] = '<img src="' + predResult0['Image'].astype(str) + '" height="50" width="50">'
+    # predResult00=predResult0.loc[0]
+    # predResult = predResult0[['ASIN', 'Predicted_Rank']].copy()
+    #
+    # best = list(predResult0[predResult0['Sales Rank'] == 2]['Predicted_Rank'])
+    # mid = list(predResult0[predResult0['Sales Rank'] == 1]['Predicted_Rank'])
+    # low = list(predResult0[predResult0['Sales Rank'] == 0]['Predicted_Rank'])
+    #
+    # result1=predResult.style.apply(lambda x: [
+    #     'background: greenyellow' if x.Predicted_Rank in best else 'background: mediumseagreen' if x.Predicted_Rank in mid
+    #     else 'background: silver' if x.Predicted_Rank in low else '' for i in x], axis=1).render()
+    #
+    # result2= predResult0[['Image','ASIN','Predicted_Rank', 'Name','Price','Days before 5th review','Average length of review']].copy()
 
-    best = list(predResult0[predResult0['Sales Rank'] == 2]['Predicted_Rank'])
-    mid = list(predResult0[predResult0['Sales Rank'] == 1]['Predicted_Rank'])
-    low = list(predResult0[predResult0['Sales Rank'] == 0]['Predicted_Rank'])
-
-    result1=predResult.style.apply(lambda x: [
-        'background: greenyellow' if x.Predicted_Rank in best else 'background: mediumseagreen' if x.Predicted_Rank in mid
-        else 'background: silver' if x.Predicted_Rank in low else '' for i in x], axis=1).render()
-
-    result2= predResult0[['Image','ASIN','Predicted_Rank', 'Name','Price','Days before 5th review','Average length of review']].copy()
-1
-    return render_template('fortunecookietest.html', result1=result1, result2=result2.to_html(escape=False))
-
+    # return render_template('index.html', result1=predResult, result2=result2.to_html(escape=False))
+    return render_template('index.html', result=predResult0, result1=predResult00)
 
 
 
