@@ -16,12 +16,8 @@
       <header>
          <div class="line">
             <div class="box">
-               <div class="s-6 l-2"> 
-                  <img src="/static/img/logo.png">
-               </div>
-               <div class="s-12 l-8 right">
-                  <div class="margin">
-                  </div>
+                <div class="margin2x">
+                  <h2>  Fortune Cookie 1.0  </h2>
                </div>
             </div>
          </div>
@@ -41,104 +37,88 @@
          </div>
       </header>
       <!-- ASIDE NAV AND CONTENT -->
-      <div class="line">
-         <div class="box">
-            <div class="margin2x">
-               <!-- CONTENT -->
-               <section class="s-12 m-8 l-9 right">
-                  <h1>Predicted sales rank</h1>
-                  <div class="margin">
-                     {% for i in result %}
-                        {% if loop.index == 1 %}
-                           <div class="s-12 m-6 l-4">
-                              <center><img src={{i['Image']}} style="height:300px;" /></center>
-                              <h4 class="margin-bottom">
-                                 <center>{{i['ASIN']}}</center>
-                              </h4>
-                              <table>
-                                 <tr>
-                                    {% if i['Predicted_Rank'] == 'Best Seller' %}
-                                       <th bgcolor="green">
-                                    {% elif i['Predicted_Rank'] == 'Top 50%'  %}
-                                       <th bgcolor="yellow">
-                                    {% elif i['Predicted_Rank'] == 'Bottom 50%'  %}
-                                       <th bgcolor="grey">
-                                    {% endif%}
-                                 <center>{{i['Predicted_Rank']}}</center></th>
-                                 </tr>
-                                 </tr>
-                                    <td><center>{{i['Price']}}</center> </td>
-                                 </tr>
-                              </table>
-                           </div>
-                        {% elif loop.index == 2 %}
-                           <div class="s-12 m-6 l-4">
-                              <center><img src={{i['Image']}} style="height:300px;" /></center>
-                              <h4 class="margin-bottom">
-                                 <center>{{i['ASIN']}}</center>
-                              </h4>
-                              <table>
-                                 <tr>
-                                    {% if i['Predicted_Rank'] == 'Best Seller' %}
-                                       <th bgcolor="green">
-                                    {% elif i['Predicted_Rank'] == 'Top 50%'  %}
-                                       <th bgcolor="yellow">
-                                    {% elif i['Predicted_Rank'] == 'Bottom 50%'  %}
-                                       <th bgcolor="grey">
-                                    {% endif%}
-                                 <center>{{i['Predicted_Rank']}}</center></th>
-                                 </tr>
-                                 </tr>
-                                    <td><center>{{i['Price']}}</center></td>
-                                 </tr>
-                              </table>
-                           </div>
-                        {% elif loop.index == 3 %}
-                           <div class="s-12 m-6 l-4">
-                              <center><img src={{i['Image']}} style="height:300px;" /></center>
-                              <h4 class="margin-bottom">
-                                 <center>{{i['ASIN']}}</center>
-                              </h4>
-                              <table>
-                                 <tr>
-                                    {% if i['Predicted_Rank'] == 'Best Seller' %}
-                                       <th bgcolor="green">
-                                    {% elif i['Predicted_Rank'] == 'Top 50%'  %}
-                                       <th bgcolor="yellow">
-                                    {% elif i['Predicted_Rank'] == 'Bottom 50%'  %}
-                                       <th bgcolor="grey">
-                                    {% endif%}
-                                 <center>{{i['Predicted_Rank']}}</center></th>
-                                 </tr>
-                                 </tr>
-                                    <td> <center>{{i['Price']}}</center></td>
-                                 </tr>
-                              </table>
-                        {% endif %}
-                     {% endfor %}
-                  </div>
-               </section>
+      <body>
+         <div class="line">
+            <div class="box">
+               <div class="margin2x">
+                  <!-- CONTENT -->
+                  <section class="s-12 m-8 l-9">
+                     <div class="margin">
+                        {% for i in result %}
+                           {% if loop.index == 1 %}
+                              <div class="s-12 m-6 l-4">
+                                 <center><img src={{i['Image']}} style="height:300px;" /></center>
+                                 <h4 class="margin-bottom">
+                                    <center>{{i['ASIN']}}</center>
+                                 </h4>
+                                 <table>
+                                    <tr>
+                                       {% if i['Predicted_Rank'] == 'Best Seller' %}
+                                          <th bgcolor="green">
+                                       {% elif i['Predicted_Rank'] == 'Top 50%'  %}
+                                          <th bgcolor="yellow">
+                                       {% elif i['Predicted_Rank'] == 'Bottom 50%'  %}
+                                          <th bgcolor="grey">
+                                       {% endif%}
+                                    <center>{{i['Predicted_Rank']}}</center></th>
+                                    </tr>
+                                    </tr>
+                                       <td><center>{{i['Price']}}</center> </td>
+                                    </tr>
+                                 </table>
+                              </div>
+                           {% elif loop.index == 2 %}
+                              <div class="s-12 m-6 l-4">
+                                 <center><img src={{i['Image']}} style="height:300px;" /></center>
+                                 <h4 class="margin-bottom">
+                                    <center>{{i['ASIN']}}</center>
+                                 </h4>
+                                 <table>
+                                    <tr>
+                                       {% if i['Predicted_Rank'] == 'Best Seller' %}
+                                          <th bgcolor="green">
+                                       {% elif i['Predicted_Rank'] == 'Top 50%'  %}
+                                          <th bgcolor="yellow">
+                                       {% elif i['Predicted_Rank'] == 'Bottom 50%'  %}
+                                          <th bgcolor="grey">
+                                       {% endif%}
+                                    <center>{{i['Predicted_Rank']}}</center></th>
+                                    </tr>
+                                    </tr>
+                                       <td><center>{{i['Price']}}</center></td>
+                                    </tr>
+                                 </table>
+                              </div>
+                           {% elif loop.index == 3 %}
+                              <div class="s-12 m-6 l-4">
+                                 <center><img src={{i['Image']}} style="height:300px;" /></center>
+                                 <h4 class="margin-bottom">
+                                    <center>{{i['ASIN']}}</center>
+                                 </h4>
+                                 <table>
+                                    <tr>
+                                       {% if i['Predicted_Rank'] == 'Best Seller' %}
+                                          <th bgcolor="green">
+                                       {% elif i['Predicted_Rank'] == 'Top 50%'  %}
+                                          <th bgcolor="yellow">
+                                       {% elif i['Predicted_Rank'] == 'Bottom 50%'  %}
+                                          <th bgcolor="grey">
+                                       {% endif%}
+                                    <center>{{i['Predicted_Rank']}}</center></th>
+                                    </tr>
+                                    </tr>
+                                       <td> <center>{{i['Price']}}</center></td>
+                                    </tr>
+                                 </table>
+                           {% endif %}
+                        {% endfor %}
+                     </div>
+                  </section>
                <!-- ASIDE NAV -->
-               <aside class="s-12 m-4 l-3">
-                  <div class="aside-nav minimize-on-small">
-                     <p class="aside-nav-text">Sidebar navigation</p>
-                     <ul>
-                        <li>
-                           <a>Product</a>
-                           <ul>
-                              <li><a>Product 1</a></li>
-                              <li><a>Product 2</a></li>
-                              <li>
-                                 <a>Product 3</a>
-                              </li>
-                           </ul>
-                        </li>
-                     </ul>
-                  </div>
-               </aside>
+               </div>
             </div>
          </div>
-      </div>
+      </body>
       <!-- FOOTER -->
       <footer class="line">
          <div class="s-12 l-6">
