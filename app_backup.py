@@ -34,12 +34,11 @@ import pickle
 # from pprint import pprint
 # import re
 # import pandas as pd
-
 def ParseReviews(asin):
     # Added Retrying
     for i in range(5):
         try:
-            imglist = {}
+            imglist={}
             # This script has only been tested with Amazon.com
             amazon_url = 'http://www.amazon.com/dp/' + asin
             # Add some recent user agent to prevent amazon from blocking the request
@@ -50,13 +49,12 @@ def ParseReviews(asin):
             page_response = page.text
 
             soup = BeautifulSoup(page_response)
-            # print soup
             for i in soup.find_all('div', {"id": "imgTagWrapperId"}):
                 imglist = i.img['data-a-dynamic-image']
             img = ast.literal_eval(imglist)
             imgLink = img.keys()[-1]
-            findbrand = soup.find_all('th', {"class": "a-color-secondary a-size-base prodDetSectionEntry"})
-            raw_brand = findbrand[3].find_next_sibling("td").text
+            j = soup.find_all('th', {"class": "a-color-secondary a-size-base prodDetSectionEntry"})
+            brand = j[3].find_next_sibling("td").text
 
             parser = html.fromstring(page_response)
             XPATH_AGGREGATE = '//span[@id="acrCustomerReviewText"]'
@@ -73,8 +71,8 @@ def ParseReviews(asin):
             raw_product_name = parser.xpath(XPATH_PRODUCT_NAME)
             product_name = ''.join(raw_product_name).strip()
             raw_categories = parser.xpath(XPATH_CATEGORY)
-            brand = ''.join(raw_brand).strip()
             categories = ''.join(raw_categories).replace('\n            \n            ', ',').strip()
+            # 			categories=categories1.strip().split(',')
             total_ratings = parser.xpath(XPATH_AGGREGATE_RATING)
             reviews = parser.xpath(XPATH_REVIEW_SECTION_1)
             if not reviews:
@@ -141,6 +139,7 @@ def ParseReviews(asin):
                     'review_header': review_header,
                     'review_rating': review_rating,
                     'review_author': author
+
                 }
                 reviews_list.append(review_dict)
 
@@ -187,7 +186,7 @@ def GetDataInput(scrapedData, asinList):
             if starList[z] in scrapedData[i]['ratings']:
                 overall = overall + (z + 1) * float(re.sub('[!@#$%]', '', scrapedData[i]['ratings'][starList[z]])) / 100
         description = scrapedData[i]['name']
-        categories = scrapedData[0]['categories']
+        categories = pd.Series(scrapedData[i]['categories'])
         imgLink = scrapedData[i]['imgLink']
         brand = scrapedData[i]['brand']
         metaList.append((asin, description, price, overall, categories, imgLink, brand))
@@ -201,6 +200,13 @@ def GetDataInput(scrapedData, asinList):
                             columns=['asin', 'description', 'price', 'overall', 'categories', 'imgLink', 'brand'])
     reviewDfIn = pd.DataFrame(reviewList, columns=['asin', 'reviewTime', 'reviewText'])
     dfIn = reviewDfIn.join(metaDfIn.set_index('asin'), on='asin')
+
+    # Categories
+    #     tags = pd.Series(dfIn['categories'])
+    #     print tags
+    #     tags2 = tags.rename(columns = lambda x : 'cat_' + str(x))
+    #     dfIn=pd.concat([dfIn[:], tags2[:]], axis=1)
+    #     print list(dfIn)
 
     # extract 5 reviews
 
@@ -284,80 +290,81 @@ def RunML(mlData):
             mlData[i] = 0
     mlData['prediction'] = trained_logistic_regression_model.predict(mlData[training_features])
     return mlData
-
-def cleanData(dataInput0):
-    foo = lambda x: pd.Series([i for i in x.split(',')])
-    tags = dataInput0['categories'].apply(foo)
-    tags2 = tags.rename(columns = lambda x : 'cat_' + str(x))
-    dataInput=pd.concat([dataInput0[:], tags2[:]], axis=1)
-    cat_1dummy= pd.get_dummies(dataInput['cat_1'])
-    cat_2dummy= pd.get_dummies(dataInput['cat_2'])
-    cat_3dummy= pd.get_dummies(dataInput['cat_3'])
-    df5s2brand= pd.get_dummies(dataInput['brand'])
-    return dataInput
+    #     conf_matrix=confusion_matrix(test_y, test_x['prediction'])
 
 
-app = Flask(__name__)
 
 
-@app.route('/')
-def my_form():
-    return render_template("my-form.html")
+
+# app = Flask(__name__)
+
+#
+# @app.route('/')
+# def my_form():
+#     return render_template("my-form.html")
+#
+#
+# @app.route('/', methods=['POST'])
+
+# def my_form_post():
+# pd.set_option('display.max_colwidth', -1)
+# input = request.form['text'].replace(" ", "")
+# asinList0 = list(input.split(','))
+# asinList = [x.encode('UTF8') for x in asinList0]
 
 
-@app.route('/', methods=['POST'])
+# predResult0=[{'ASIN':'B074F2YGBC', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61dZqjVogTL._SL1500_.jpg', 'Predicted_Rank':'Best Seller', 'Price':'$129'},
+#              {'ASIN':'B074F2PHLB', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71SG5mfNh-L._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'$199'},
+#              {'ASIN':'B0742NW243', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61NNyibRsmL._SL1500_.jpg', 'Predicted_Rank':'Top 50%', 'Price':'$169'}]
+# predResult00=[1]
 
-def my_form_post():
-    pd.set_option('display.max_colwidth', -1)
-    input = request.form['text'].replace(" ", "")
-    asinList0 = list(input.split(','))
-    asinList = [x.encode('UTF8') for x in asinList0]
+asinList=['B074F2YGBC', 'B074F2PHLB']
 
-    # predResult0=[{'ASIN':'B074F2YGBC', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61dZqjVogTL._SL1500_.jpg', 'Predicted_Rank':'Best Seller', 'Price':'$129'},
-    #          {'ASIN':'B074F2PHLB', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71SG5mfNh-L._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'$199'},
-    #          {'ASIN':'B0742NW243', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61NNyibRsmL._SL1500_.jpg', 'Predicted_Rank':'Top 50%', 'Price':'$169'}]
-# # predResult00=[1]
-    try:
-        scrapedData = ReadAsin(asinList)
+scrapedData = ReadAsin(asinList)
+dataInput = GetDataInput(scrapedData, asinList)
+mlData = RunDoc2Vec(dataInput)
+prediction = RunML(mlData)  #
 
-        dataInput0 = GetDataInput(scrapedData, asinList)
-        dataInput = cleanData(dataInput0)
-        mlData = RunDoc2Vec(dataInput)
-        prediction = RunML(mlData)  #
-        predList = []
+predList = []
+for i in range(0, len(prediction)):
+    imgLink = prediction.iloc[i]['imgLink']
+    asin = prediction.iloc[i]['asin']
+    name = prediction.iloc[i]['description']
+    dateFirst = prediction.iloc[i]['reviewTime']
+    daysToFiveRev = prediction.iloc[i]['daysToFiveRev']
+    reviewLength = prediction.iloc[i]['lenReviewTextAvg']
+    price = prediction.iloc[i]['price']
+    predRankCat = prediction.iloc[i]['prediction']
 
-        for i in range(0, len(prediction)):
-            imgLink = prediction.iloc[i]['imgLink']
-            asin = prediction.iloc[i]['asin']
-            name = prediction.iloc[i]['description']
-            dateFirst = prediction.iloc[i]['reviewTime']
-            daysToFiveRev = prediction.iloc[i]['daysToFiveRev']
-            reviewLength = prediction.iloc[i]['lenReviewTextAvg']
-            price = prediction.iloc[i]['price']
-            predRankCat = prediction.iloc[i]['prediction']
-            brand = dataInput.loc[dataInput['asin'] == asin, 'brand'].iloc[0]
+    predList.append((imgLink, asin, name, dateFirst, daysToFiveRev, reviewLength, price, predRankCat))
+    predResult0 = pd.DataFrame(predList, columns=['Image', 'ASIN', 'Name', 'Date of first review',
+                                                  'Days before 5th review',
+                                                  'Average length of review', 'Price', 'Sales Rank'
+                                                  ])
+predResult0['Predicted_Rank'] = predResult0['Sales Rank'].apply(
+    lambda x: ['Best Seller' if x == 2 else 'Top 50%' if x == 1
+    else 'Bottom 50%' if x == 0 else ''])
+predResult0['Predicted_Rank'] = predResult0['Predicted_Rank'].map(lambda x: x[0].lstrip('['').rstrip('']'))
+# predResult0['Image'] = '<img src="' + predResult0['Image'].astype(str) + '" height="50" width="50">'
+predResult00=predResult0.loc[0]
+predResult = predResult0[['ASIN', 'Predicted_Rank']].copy()
 
-            predList.append((imgLink, asin, name, dateFirst, daysToFiveRev, reviewLength, price, brand, predRankCat))
-            predResult0 = pd.DataFrame(predList, columns=['Image', 'ASIN', 'Name', 'Date of first review',
-                                                          'Days before 5th review',
-                                                          'Average length of review', 'Price', 'Brand', 'Sales Rank'
-                                                          ])
-        predResult0['Predicted_Rank'] = predResult0['Sales Rank'].apply(
-            lambda x: ['Best Seller' if x == 2 else 'Top 50%' if x == 1
-            else 'Bottom 50%' if x == 0 else ''])
-        predResult0['Predicted_Rank'] = predResult0['Predicted_Rank'].map(lambda x: x[0].lstrip('['').rstrip('']'))
+best = list(predResult0[predResult0['Sales Rank'] == 2]['Predicted_Rank'])
+mid = list(predResult0[predResult0['Sales Rank'] == 1]['Predicted_Rank'])
+low = list(predResult0[predResult0['Sales Rank'] == 0]['Predicted_Rank'])
 
-        best = list(predResult0[predResult0['Sales Rank'] == 2]['Predicted_Rank'])
-        mid = list(predResult0[predResult0['Sales Rank'] == 1]['Predicted_Rank'])
-        low = list(predResult0[predResult0['Sales Rank'] == 0]['Predicted_Rank'])
 
-        predResult0 = predResult0.T.to_dict().values()
-        return render_template('index.html', result=predResult0)
-    except:
-        print "We need at least 1 review"
-    return {"Error: We need at least 1 review. Failed to process the page"}
+print predResult0['Image']
+    # result1=predResult.style.apply(lambda x: [
+    #     'background: greenyellow' if x.Predicted_Rank in best else 'background: mediumseagreen' if x.Predicted_Rank in mid
+    #     else 'background: silver' if x.Predicted_Rank in low else '' for i in x], axis=1).render()
+    #
+    # result2= predResult0[['Image','ASIN','Predicted_Rank', 'Name','Price','Days before 5th review','Average length of review']].copy()
+
+    # return render_template('index.html', result1=predResult, result2=result2.to_html(escape=False))
+#     return render_template('index.html', result=predResult0, result1=predResult00)
 #
 #
 #
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()
