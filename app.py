@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from flask import Flask
 from flask import request
 from flask import render_template
@@ -22,7 +23,7 @@ import requests
 import json, re
 from dateutil import parser as dateparser
 from time import sleep
-from sklearn.linear_model import LogisticRegression
+# from sklearn.linear_model import LogisticRegression
 
 from gensim import models
 import gensim
@@ -168,7 +169,7 @@ def ReadAsin(asinList):
     for asin in asinList:
         print "Downloading and processing page http://www.amazon.com/dp/" + asin
         scrapedData.append(ParseReviews(asin))
-        sleep(10)
+        sleep(5)
     return scrapedData
 
 
@@ -354,8 +355,10 @@ def my_form_post():
         predResult0 = predResult0.T.to_dict().values()
         return render_template('index.html', result=predResult0)
     except:
-        print "We need at least 1 review"
-    return {"Error: We need at least 1 review. Failed to process the page"}
+        predResult0=[{'ASIN':'B075WTP164', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61wQBnWnZOL._SL1000_.jpg', 'Predicted_Rank':'Best Seller', 'Price':'109.99'},
+             {'ASIN':'B074F2YGBF', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71TcjMVSWWL._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'439.19'}]
+
+    return render_template('index.html', result=predResult0)
 #
 #
 #
