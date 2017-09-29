@@ -168,7 +168,7 @@ def ReadAsin(asinList):
     for asin in asinList:
         print "Downloading and processing page http://www.amazon.com/dp/" + asin
         scrapedData.append(ParseReviews(asin))
-        sleep(5)
+        sleep(10)
     return scrapedData
 
 
