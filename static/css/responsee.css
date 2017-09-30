@@ -12,7 +12,7 @@
 }
 body {
   background:none repeat scroll 0 0 #d3d3d3;
-  font-size:16px;
+  font-size:18px;
   font-family:"Lato",sans-serif;
   color:#444;
 }
@@ -150,16 +150,16 @@ nav {
   cursor:pointer;
 }
 .top-nav li a {
-  color:#7C7E81 ;
+  color:#fff ;
   display:block;
   font-size:1.25rem;
-  padding-bottom:1.5rem;
-  padding-top:1.5rem;
-  padding-right:1.5rem;
-  padding-left:3rem;
+  padding-bottom:0.5rem;
+  padding-top:0.5rem;
+  padding-right:0.5rem;
+  padding-left:0.5rem;
 }
 .top-nav li ul li a {
-  background:none repeat scroll 0 0 #F1DB82;
+  background:none repeat scroll 0 0 #E8D06F;
   min-width:100%;
   padding:0.625rem;
 }
@@ -270,19 +270,46 @@ ul.chevron .submenu > a:after, ul.chevron .sub-submenu > a:after,ul.chevron .asi
   list-style:none outside none;
   padding:10px;
 }
+
+.leftpane{
+    display: block;
+    width: 45%;
+    min-width: 350px;
+    height: available;
+    min-height: 400px;
+    float: left;
+}
+.rightpane{
+    display: block;
+    width: 45%;
+    min-width: 350px;
+    height: available;
+    min-height: 400px;
+    float: right;
+}
+
+.centrepane{
+    display: block;
+    width: 50%;
+    min-width: 350px;
+    height: available;
+    min-height: 200px;
+    float: center;
+}
+
 .margin,.margin2x {display: block;}
-.margin {margin:20 -20rem;}
-.margin2x {margin:20 -20rem;}
+.margin {margin:10 -10rem;}
+.margin2x {margin:10 -10rem;}
 .line {clear:left;}
 .line .line {padding:0;}
 .hide-l {display:none!important;}
 .box {
   background:none repeat scroll 0 0 #fff;
   display:block;
-  padding-top:1.25rem;
+  padding-top:1rem;
   padding-right:3rem;
   padding-left:3rem;
-  padding-bottom:1.25rem;
+  padding-bottom:1rem;
   width:100%;
 }
 .margin-bottom {margin-bottom:2.5 rem;}

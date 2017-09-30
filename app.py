@@ -261,7 +261,7 @@ def RunDoc2Vec(dataInput):
 
 
 def RunML(mlData):
-    f = open('FortuneCookie.pickle', 'rb')
+    f = open('FortuneCookieML.pickle', 'rb')
     trained_logistic_regression_model = pickle.load(f)
     f.close()
 
@@ -300,14 +300,19 @@ def cleanData(dataInput0):
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def my_form():
     return render_template("my-form.html")
 
+@app.route('/about')
+def about():
+    return render_template("about.html")
+
+@app.route('/fortunecookie')
+def fortunecookie():
+    return render_template("fortunecookie.html")
 
 @app.route('/', methods=['POST'])
-
 def my_form_post():
     pd.set_option('display.max_colwidth', -1)
     input = request.form['text'].replace(" ", "")
@@ -355,6 +360,7 @@ def my_form_post():
         predResult0 = predResult0.T.to_dict().values()
         return render_template('index.html', result=predResult0)
     except:
+
         predResult0=[{'ASIN':'B075WTP164', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61wQBnWnZOL._SL1000_.jpg', 'Predicted_Rank':'Best Seller', 'Price':'109.99'},
              {'ASIN':'B074F2YGBF', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71TcjMVSWWL._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'439.19'}]
 

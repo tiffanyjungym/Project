@@ -6,7 +6,7 @@
       <title>Fortune Cookie </title>
       <link rel="stylesheet" href="/static/css/components.css">
       <link rel="stylesheet" href="/static/css/icons.css">
-      <link rel="stylesheet" href="/static/css/responsee.css?v={52}">
+      <link rel="stylesheet" href="/static/css/responsee.css?v={55}">
       <link href='http://fonts.googleapis.com/css?family=Lato|Montserrat:400,300,600,700,800&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
       <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
       <script type="text/javascript" src="js/jquery-ui.min.js"></script>
@@ -19,6 +19,10 @@
                 <div class="margin2x">
                   <h2>  Fortune Cookie  </h2>
                </div>
+               <div class="s-12 l-8 right">
+                  <div class="margin">
+                  </div>
+               </div>
             </div>
          </div>
          <!-- TOP NAV -->
@@ -26,11 +30,11 @@
             <nav>
                <p class="nav-text">Main navigation</p>
                <div class="top-nav s-12 l-10">
-                  <ul>
-                     <li><a href="/">home</a></li>
-                  </ul>
                    <ul>
-                     <li><a href="fortunecookie">fortune cookie</a></li>
+                     <li><a href="/">home</a></li>
+                   </ul>
+                   <ul>
+                     <li><a href="about">fortune cookie</a></li>
                    </ul>
                    <ul>
                      <li><a href="about">about</a></li>
@@ -44,28 +48,28 @@
          <div class="box">
             <div class="margin2x">
                 <!-- CONTENT -->
+
                 <div class="leftpane">
                     <br>
-                    <b>Fortune Cookie</b> helps you identify future best sellers among new products.
-                    Please enter your product Amazon product ASIN to try it out! <br>
-
-                </div>
-                <div class="rightpane">
-                    <br>
-                    <h4> Amazon product ASIN: </h4><form action="." method="POST">
-                        <input type="text" name="text" size="35">
-                        <input type="submit" name="my-form" value="Submit">
-                        <h6>(e.g. B075WTP164, B074F2YGBF, B075MTSS8L)</h6>
+                        Fortune Cookie uses <b>Amazon product review data</b> provided by Julian McAuley [1],
+                        along with algorithms like <b>doc2vec</b> (for review text analysis), and <b>multinomial logistic regression </b>(for classification).
+                    <br><br>To learn more, please refer to the slides. <br>
                         <br>
-                    </form>
-                    <br>
                 </div>
+                <center>
+                <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTQ7wXUqBOxC-5gcbODVXG0e1MDZbRYMRKccdXmh9hFnC8YaxYqKHLnZbYzATPZICAMNb0mSJxlAqQy/embed?start=false&loop=false&delayms=3000" frameborder="0" width="480" height="299" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                <br>
+                    <h6>[1]. Ups and downs: Modeling the visual evolution of fashion trends with one-class collaborative filtering
+                        R. He, J. McAuley <i> WWW </i>, 2016</h6>
+                <br>
+                </center>
             </div>
+         </div>
       </div>
       <!-- FOOTER -->
       <footer class="line">
          <div class="s-12 l-6">
-             <p><h6>Copyright 2017 Tiffany Jung</h6></p>
+            <p><h6>Copyright 2017 Tiffany Jung</h6></p>
          </div>
       </footer>
       <script type="text/javascript" src="js/responsee.js"></script>
