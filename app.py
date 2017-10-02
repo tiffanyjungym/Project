@@ -162,16 +162,26 @@ def ParseReviews(asin):
     return {"error": "failed to process the page", "asin": asin}
 
 
-def ReadAsin(asinList):
-    # Add your own ASINs here
+
+def ReadAsin(asinList,dataRecord):
+    #Add your own ASINs here
     asinList = asinList
     scrapedData = []
+    dataInput = pd.DataFrame()
     for asin in asinList:
-        print "Downloading and processing page http://www.amazon.com/dp/" + asin
-        scrapedData.append(ParseReviews(asin))
-        sleep(5)
-    return scrapedData
-
+        if asin in dataRecord.asin.values:
+            print "Found data in the record"
+            dataInput=dataInput.append(dataRecord.loc[dataRecord['asin'] == asin])
+        else:
+            try:
+                print "Downloading and processing page http://www.amazon.com/dp/"+asin
+                scrapedData.append(ParseReviews(asin))
+                sleep(5)
+                dataInput0 = GetDataInput(scrapedData, asinList)
+                dataInput=dataInput.append(cleanData(dataInput0))
+            except:
+                print "Failed to connect Amazon, please try again"
+    return dataInput
 
 def GetDataInput(scrapedData, asinList):
     metaList = []
@@ -265,19 +275,11 @@ def RunML(mlData):
     trained_logistic_regression_model = pickle.load(f)
     f.close()
 
-    training_features = ['topSimilar', 'scoDifHigLow', 'lenReviewTextAvg', 'lenDescriptionAvg',
-                         'numDaysPriorMax', 'daysToFiveRev',
-                         'overall', 'price',
-                         'Canister Vacuums', 'Carpet Cleaners, Sweepers & Accessories', 'Handheld Vacuums',
-                         'Robotic Vacuums', 'Stick Vacuums & Electric Brooms', 'Upright Vacuums',
-                         'Bissell', 'Black &amp; Decker', 'Dirt Devil', 'Dyson', 'Electrolux',
-                         'EnviroCare', 'Eureka', 'Euro-Pro', 'FilterStream', 'GV', 'Green Label', 'Hoover', 'Infinuvo',
-                         'Irobot',
-                         'Kenmore', 'Miele', 'Moneual', 'NEATO', 'Neato Robotics', 'Oreck',
-                         'Oreck Merchandising LLC, us kitchen, OREBQ',
-                         'Ovente', 'P3', 'Panasonic', 'Robot Add-Ons', 'Sebo Vacuums',
-                         'Shark', 'Shop-Vac', 'Synergy', 'Techko Maid', 'The Bank Vacuum Company', 'Wrapables',
-                         'iRobot']
+    training_features = ['MZY LLC', 'Nutone', 'Sanitaire', 'Hoover', 'Cana-Vac', 'Vacuums', 'Kirby', 'Bissell', 'Impress', 'Prolux', 'Lindhaus', 'scoSimSec', 'Fuller Brush', 'GV', 'elegantstunning', 'overall', 'Sebo Vacuums', 'Eureka', 'daysToFiveRev', 'Techko Maid', 'Severin', 'Shark', 'Ghibli', 'Kenmore', 'Allegro', 'Sharp', 'Hello Kitty', 'scoSimHig',
+                          'Koolatron', 'Rainbow', 'Generic', 'miele fjm', 'Aftermarket', 'Neato Robotics', 'Infinuvo', 'BuyDirect2You', 'Rexair', 'ZVac', 'NEATO', 'Hayward', 'iRobot', 'Shop-Vac', 'Northwest', 'scoSimLow', 'Samsung', 'Upright Vacuums', 'Reliable', 'iClebo', 'Miele', 'Metro Vacuum', 'Robot Add-Ons', 'Sunbeam', 'Eureka Sanitaire', 'Darice',
+                          'lenReviewTextAvg', 'Jason', 'Moneual', 'DuraGreen', 'Numatic', 'Rug Doctor', 'Metapo', 'Totes-ISOTONER', 'IDS', 'rainbow e series', 'Handheld Vacuums', 'AI-Vacuum',
+                          'Zeon', 'Black &amp; Decker', 'Electrolux', 'Fuller Brush Vacuums', 'Greenidea', 'Kalorik', 'Fantom', 'Hurricane', 'Synergy Digital', 'Canister Vacuums', 'Dust Care', 'MetroVac', 'Metropolitan Vacuum Cleaner', 'Roomba iRobot', 'Titan', 'Synergy', 'Rexair/rainbow', 'Robotic Vacuums', 'Dyson', 'Panasonic', 'Carpet Cleaners, Sweepers & Accessories',
+                          'Roomba', 'Sebo', 'EcoGecko', 'Johnny Vacuum Hydrogen', 'Oreck Merchandising LLC, us kitchen, OREBQ', 'LG', 'IdeaWorks', 'ReadiVac', 'Koblenz', 'UpStart Battery', 'Stick Vacuums & Electric Brooms', 'The Bank Vacuum Company', 'lenDescriptionAvg', 'Dirt Devil', 'Atc', 'Vacuums & Floor Care', 'Raycop', 'price', 'Soniclean', 'Oreck', 'Black Series', 'Nilfisk-Advance', 'CIMC LLC', 'Cirrus', 'Frigidaire', 'WINBOT by ECOVACS', 'Irobot', 'Crucial Vacuum', 'Mint']
     target = 'rankCat'
 
     for i in training_features:
@@ -312,26 +314,28 @@ def about():
 def fortunecookie():
     return render_template("fortunecookie.html")
 
+@app.route('/error')
+def error():
+    return render_template("error.html")
+
 @app.route('/', methods=['POST'])
 def my_form_post():
     pd.set_option('display.max_colwidth', -1)
     input = request.form['text'].replace(" ", "")
     asinList0 = list(input.split(','))
     asinList = [x.encode('UTF8') for x in asinList0]
-
     # predResult0=[{'ASIN':'B074F2YGBC', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61dZqjVogTL._SL1500_.jpg', 'Predicted_Rank':'Best Seller', 'Price':'$129'},
     #          {'ASIN':'B074F2PHLB', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71SG5mfNh-L._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'$199'},
     #          {'ASIN':'B0742NW243', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61NNyibRsmL._SL1500_.jpg', 'Predicted_Rank':'Top 50%', 'Price':'$169'}]
 # # predResult00=[1]
-    try:
-        scrapedData = ReadAsin(asinList)
-
-        dataInput0 = GetDataInput(scrapedData, asinList)
-        dataInput = cleanData(dataInput0)
+    dataRecord = pd.read_pickle("dataRecord.pkl")
+    dataInput = ReadAsin(asinList, dataRecord)
+    if dataInput.empty:
+        return render_template('error.html')
+    else:
         mlData = RunDoc2Vec(dataInput)
         prediction = RunML(mlData)  #
         predList = []
-
         for i in range(0, len(prediction)):
             imgLink = prediction.iloc[i]['imgLink']
             asin = prediction.iloc[i]['asin']
@@ -346,7 +350,7 @@ def my_form_post():
             predList.append((imgLink, asin, name, dateFirst, daysToFiveRev, reviewLength, price, brand, predRankCat))
             predResult0 = pd.DataFrame(predList, columns=['Image', 'ASIN', 'Name', 'Date of first review',
                                                           'Days before 5th review',
-                                                          'Average length of review', 'Price', 'Brand', 'Sales Rank'
+                                                          'Average length of review', 'Price', 'brand', 'Sales Rank'
                                                           ])
         predResult0['Predicted_Rank'] = predResult0['Sales Rank'].apply(
             lambda x: ['Best Seller' if x == 2 else 'Top 50%' if x == 1
@@ -359,13 +363,8 @@ def my_form_post():
 
         predResult0 = predResult0.T.to_dict().values()
         return render_template('index.html', result=predResult0)
-    except:
-
-        predResult0=[{'ASIN':'B075WTP164', 'Image':'https://images-na.ssl-images-amazon.com/images/I/61wQBnWnZOL._SL1000_.jpg', 'Predicted_Rank':'Best Seller', 'Price':'109.99'},
-             {'ASIN':'B074F2YGBF', 'Image':'https://images-na.ssl-images-amazon.com/images/I/71TcjMVSWWL._SL1500_.jpg', 'Predicted_Rank':'Bottom 50%','Price':'439.19'}]
-
-    return render_template('index.html', result=predResult0)
-#
+    return
+# #
 #
 #
 if __name__ == '__main__':
